@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aditya Lakshminarasimhan</title>
+<meta name="description" content="Computer science at UC Berkeley. Graph ML for biology, protein models, and bioinformatics tooling.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#101215; --bg2:#15181c; --card:#171a1f; --line:#262b32;
+  --text:#e7e4dc; --muted:#9b9a94; --dim:#6f6f6b;
+  --accent:#86c0ad; --accent2:#dba76f; --accent3:#8fa3d6;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(900px 500px at 85% -5%,rgba(134,192,173,.08),transparent 60%),radial-gradient(700px 500px at -10% 30%,rgba(143,163,214,.05),transparent 60%);
+  background-attachment:fixed}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:rgba(16,18,21,.72);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;height:56px}
+nav .brand{font-family:var(--serif);font-size:17px}
+nav ul{display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:14px;color:var(--muted)}
+nav ul a:hover{color:var(--text)}
+.hero{padding:110px 0 70px}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font:400 clamp(38px,6vw,64px)/1.08 var(--serif);margin:16px 0 22px;letter-spacing:-.01em}
+.hero p{max-width:600px;color:var(--muted);font-size:18px;margin:0 0 10px}
+.hero .meta{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px 22px;font-size:14px;color:var(--dim)}
+.hero .meta a{color:var(--muted);border-bottom:1px solid var(--line)}
+.hero .meta a:hover{color:var(--text);border-color:var(--accent)}
+section{padding:40px 0 20px}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:34px;border-bottom:1px solid var(--line);padding-bottom:14px}
+.sec-head h2{font:400 28px var(--serif);margin:0}
+.sec-head span{font-size:14px;color:var(--dim)}
+.project{display:grid;grid-template-columns:1fr 1.08fr;gap:48px;align-items:center;padding:34px 0 54px}
+.project+.project{border-top:1px solid var(--line)}
+.project.flip .info{grid-column:2;grid-row:1}
+.project.flip .viz{grid-column:1;grid-row:1}
+.project>.info,.project>.viz{min-width:0}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.tag{font:500 11px var(--mono);letter-spacing:.04em;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:3px 10px}
+.project h3{font:400 28px/1.2 var(--serif);margin:0 0 6px}
+.when{font-size:13px;color:var(--dim);margin-bottom:14px}
+.project p{color:#bdbbb3;margin:0 0 12px;font-size:15.5px}
+code{font:13px var(--mono);background:var(--bg2);border:1px solid var(--line);padding:1px 6px;border-radius:5px;color:var(--accent2)}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.links a{font-size:14px;padding:7px 14px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);transition:.18s}
+.links a::after{content:" ↗";color:var(--dim);transition:.18s}
+.links a:hover{border-color:var(--accent);transform:translateY(-1px)}
+.links a:hover::after{color:var(--accent)}
+.links a.primary{border-color:rgba(134,192,173,.45)}
+.viz{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.viz .stage{position:relative;aspect-ratio:16/11;width:100%}
+.viz .stage canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:pan-y}
+.viz .stage canvas:active{cursor:grabbing}
+.viz svg{display:block;width:100%;height:100%}
+.viz .bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);min-height:46px}
+.viz .bar .cap{flex:1;color:var(--muted)}
+.viz button{font:500 12px var(--mono);color:var(--text);background:transparent;border:1px solid var(--line);border-radius:7px;padding:5px 11px;cursor:pointer;transition:.15s;white-space:nowrap}
+.viz button:hover{border-color:var(--accent);color:var(--accent)}
+.viz button.on{border-color:var(--accent);color:var(--accent)}
+/* svg bits */
+.node rect{fill:#1b1f25;stroke:#323943;stroke-width:1;transition:.25s}
+.node text{fill:var(--text);font:500 12px var(--sans);pointer-events:none}
+.node text.sub{fill:var(--dim);font:10px var(--mono)}
+.node{cursor:default}
+.node.on rect{stroke:var(--accent);fill:#1a2723}
+.node:hover rect{stroke:var(--accent2)}
+.edge{fill:none;stroke:#343b44;stroke-width:1.3;transition:.4s}
+.edge.on{stroke:var(--accent);stroke-width:1.8}
+.conn{fill:#1b1f25;stroke:var(--accent2);stroke-width:1.2;cursor:default;transition:.3s}
+.conn.on{fill:var(--accent2)}
+.svgtxt{fill:var(--dim);font:10px var(--mono)}
+.cn circle{fill:#1b1f25;stroke:#38404a;transition:.25s;cursor:pointer}
+.cn text{fill:var(--muted);font:500 11px var(--sans);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.cn.on circle{fill:#26322e;stroke:var(--accent)}
+.cn.on text{fill:var(--text)}
+.ce{stroke:#2a3038;stroke-width:1;fill:none;transition:.3s}
+.ce.on{stroke:var(--accent);stroke-width:2}
+.wrap{max-width:1200px}
+.gallery{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:10px}
+.gallery figure{margin:0}
+.gallery img{width:100%;display:block;border-radius:22px;border:1px solid var(--line);transition:.25s}
+.gallery figure:hover img{transform:translateY(-4px);border-color:rgba(134,192,173,.5)}
+.gallery figcaption{font:12px var(--mono);color:var(--dim);margin-top:10px;text-align:center}
+.media-row{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:6px}
+.media{display:block;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);transition:.2s}
+a.media:hover{border-color:var(--accent);transform:translateY(-2px)}
+.media .thumb{position:relative;aspect-ratio:16/9;background:#000 center/cover no-repeat}
+.media .thumb img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85;transition:.25s}
+a.media:hover .thumb img{opacity:1}
+.media .play{position:absolute;inset:0;margin:auto;width:54px;height:54px;border-radius:50%;background:rgba(16,18,21,.72);border:1px solid rgba(255,255,255,.35);display:grid;place-items:center}
+.media .play::before{content:"";border-left:15px solid #fff;border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:4px}
+.media .cap{padding:12px 16px 14px;font-size:14px;color:var(--muted)}
+.media .cap b{display:block;color:var(--text);font-weight:500;margin-bottom:2px}
+.media.text{padding:22px;display:flex;flex-direction:column;justify-content:center;min-height:130px}
+.media.text .k{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.media.text .t{font:400 20px/1.3 var(--serif);margin-bottom:6px}
+.media.text .s{font-size:13.5px;color:var(--muted)}
+.hm rect.cell{transition:fill .4s,stroke .4s}
+.group{margin-top:10px}
+@media(max-width:860px){.gallery{grid-template-columns:repeat(2,1fr)}}
+.more{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;padding:10px 0 30px}
+.more h4{font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+.row{padding:12px 0;border-bottom:1px solid var(--line)}
+.row b{font-weight:500}
+.row small{display:block;color:var(--dim);font-size:13px}
+.row p{margin:4px 0 0;font-size:14px;color:var(--muted)}
+footer{padding:70px 0 80px;margin-top:40px;border-top:1px solid var(--line)}
+footer h2{font:400 32px var(--serif);margin:0 0 10px}
+footer p{color:var(--muted);margin:0 0 6px}
+footer a.mail{color:var(--accent);border-bottom:1px solid rgba(134,192,173,.4)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+@media(max-width:860px){
+  .project,.project.flip{grid-template-columns:1fr;gap:26px}
+  .project.flip .info,.project.flip .viz{grid-column:auto;grid-row:auto}
+  .project.flip .info{order:0}
+  nav ul{gap:16px}
+  .hero{padding-top:70px}
+}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top">Aditya L.</a>
+  <ul><li><a href="#industry">Industry</a></li><li><a href="#software">Software</a></li><li><a href="#research">Research</a></li><li><a href="#more">More</a></li><li><a href="#contact">Contact</a></li></ul>
+</div></nav>
+
+<header class="hero wrap" id="top">
+  <div class="eyebrow">UC Berkeley · Computer Science</div>
+  <h1>Aditya Lakshminarasimhan</h1>
+  <div class="meta">
+    <a href="#contact">Get in touch</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ INDUSTRY ============ -->
+<section id="industry">
+  <div class="sec-head"><h2>Industry</h2><span>Internships</span></div>
+
+  <article class="project reveal">
+    <div class="info">
+      <div class="tags"><span class="tag">American Express</span><span class="tag">Quantum optimization</span><span class="tag">Mixture-of-Experts</span></div>
+      <h3>Expert Placement for MoE Models</h3>
+      <div class="when">Software Engineering Intern · 06/2026 – present</div>
+      <p>Simulated-annealing and D-Wave quantum CQM algorithms for assigning experts to GPUs when deploying Mixture-of-Experts models. Tested across 73 layers of 3 MoE families on a two-tier NVLink / InfiniBand topology.</p>
+      <p>Cut the worst device's cross-node InfiniBand bottleneck by 34–83% compared with baselines including ELPB, FineMoE and METIS.</p>
+    </div>
+    <div class="viz">
+      <div class="stage"><svg id="moe" viewBox="0 0 560 330" role="img" aria-label="Two-node GPU cluster with traffic between experts"></svg></div>
+      <div class="bar"><span class="cap" id="moecap">Schematic. Same traffic, different expert placement.</span><button id="moebtn">optimize</button></div>
+    </div>
+  </article>
+
+  <article class="project flip reveal">
+    <div class="info">
+      <div class="tags"><span class="tag">American Express</span><span class="tag">Multi-agent RL</span><span class="tag">D-Wave · IBM Quantum</span></div>
+      <h3>Coordination in Multi-Agent RL</h3>
+      <div class="when">Software Engineering Intern · 06/2026 – present</div>
+      <p>Joint-action selection and coordination for multi-agent reinforcement learning, run on D-Wave and IBM quantum computers. Evaluated on SMACv2 and MPE-spread, where it performed better than the baselines I compared against.</p>
+      <p>Paper in draft.</p>
+    </div>
+    <div class="viz">
+      <div class="stage"><svg id="marl" viewBox="0 0 560 330" role="img" aria-label="Agents learning to cover separate landmarks"></svg></div>
+      <div class="bar"><span class="cap" id="marlcap">Illustrative, not training output. Spread-style task.</span><button id="marlbtn">restart</button></div>
+    </div>
+  </article>
+
+  <article class="project reveal">
+    <div class="info">
+      <div class="tags"><span class="tag">OpenRefractory (startup)</span><span class="tag">Red teaming</span><span class="tag">LLM security</span></div>
+      <h3>Red Teaming LLMs</h3>
+      <div class="when">Cybersecurity AI Intern · 06/2023 – 09/2023</div>
+      <p>Tested 7+ LLMs (Falcon-7B, Llama and others) with red-teaming prompts to find vulnerabilities in the models and in Java code. Led evaluations of cyberattacks and bug exploitation in enterprise-facing LLMs.</p>
+      <p>I also tested how well those earlier models could detect bugs in Java programs, using them as bug finders rather than targets.</p>
+    </div>
+    <div class="viz">
+      <div class="stage"><svg id="red" viewBox="0 0 560 330" role="img" aria-label="Grid of attack probes against several models"></svg></div>
+      <div class="bar"><span class="cap" id="redcap">Illustrative grid, not real results.</span><button id="redbtn">▶ run probes</button></div>
+    </div>
+  </article>
+</section>
+
+<!-- ============ SOFTWARE ============ -->
+<section id="software">
+  <div class="sec-head"><h2>Software</h2></div>
+
+  <!-- BioComposer -->
+  <article class="project reveal">
+    <div class="info">
+      <div class="tags"><span class="tag">Open source</span><span class="tag">Python</span><span class="tag">Bioinformatics</span></div>
+      <h3>BioComposer</h3>
+      <div class="when">Machine Learning at Berkeley × Google DeepMind · 12/2025 – present</div>
+      <p>Python framework that represents bioinformatics workflows as executable DAGs and derives tool execution order automatically. Tools are standardized with typed TOML manifests and a Rust-based container registry; Gemini-generated, inspectable Python connectors reconcile mismatched I/O formats and schemas.</p>
+      <p>Ships on PyPI (<code>pip install biocomposer</code>) with isolated Docker execution and local or Modal deployment. I served as product manager. Paper in draft.</p>
+      <div class="links"><a class="primary" href="https://mlberkeley.github.io/BioComposer/" target="_blank" rel="noopener">Project site</a></div>
+    </div>
+    <div class="viz">
+      <div class="stage"><svg id="dag" viewBox="0 0 560 330" role="img" aria-label="Example workflow DAG"></svg></div>
+      <div class="bar"><span class="cap" id="dagcap">Illustrative workflow. Hover nodes and connectors.</span><button id="dagrun">▶ run</button></div>
+    </div>
+  </article>
+
+  <!-- Geo Space Weather -->
+  <article class="project flip reveal">
+    <div class="info">
+      <div class="tags"><span class="tag">iOS</span><span class="tag">Swift</span><span class="tag">Time series</span></div>
+      <h3>Geo Space Weather</h3>
+      <div class="when">iPhone &amp; iPad · no accounts, no ads, no tracking</div>
+      <p>Shows the current state of Earth's magnetic environment on one screen. It reads live geomagnetic measurements from USGS observatories and planetary storm indices from NOAA and GFZ Potsdam, and runs ML models over 200+ years of sunspot records to project the solar cycle.</p>
+      <p>Every reading shows its source and when it was last updated. Forecasts are drawn separately from the historical record so an estimate is never mistaken for an observation.</p>
+      <div class="links"><a class="primary" href="https://apps.apple.com/us/app/geo-space-weather/id6806927601" target="_blank" rel="noopener">App Store</a><a href="https://laykworld.com/apps/geospaceweather/" target="_blank" rel="noopener">Website</a></div>
+    </div>
+    <div class="viz">
+      <div class="stage"><svg id="sun" viewBox="0 0 560 330" role="img" aria-label="Schematic of observed versus forecast solar cycle"></svg></div>
+      <div class="bar"><span class="cap" id="suncap">Schematic, not real data. Hover the curve.</span></div>
+    </div>
+    <div class="gallery">
+      <figure><img src="img/geo-home.jpg" alt="Geomagnetic state screen" loading="lazy"><figcaption>geomagnetic state</figcaption></figure>
+      <figure><img src="img/geo-sunspots.jpg" alt="Sunspot prediction screen" loading="lazy"><figcaption>sunspot prediction</figcaption></figure>
+      <figure><img src="img/geo-map.jpg" alt="Map screen" loading="lazy"><figcaption>map</figcaption></figure>
+      <figure><img src="img/geo-gauges.jpg" alt="Station gauges screen" loading="lazy"><figcaption>station gauges</figcaption></figure>
+    </div>
+  </article>
+
+  <!-- Musical Chords -->
+  <article class="project reveal">
+    <div class="info">
+      <div class="tags"><span class="tag">Java</span><span class="tag">SwiftUI</span><span class="tag">Patent filed</span></div>
+      <h3>Musical Chords</h3>
+      <div class="when">06/2022 – 06/2024 · 2023 ISEF Special Award, Finalist</div>
+      <p>A Java algorithm and SwiftUI iOS app that enumerates all valid 4- and 8-chord progressions under music theory rules, finding 407,000+ new progressions. Solo-author preprint on arXiv; patent filed for the algorithm and app.</p>
+      <div class="links"><a class="primary" href="https://arxiv.org/abs/2409.06024" target="_blank" rel="noopener">arXiv paper</a><a href="https://isef.net/project/soft041-mobile-app-that-auto-generates-music-progressions" target="_blank" rel="noopener">ISEF project page</a></div>
+    </div>
+    <div class="viz">
+      <div class="stage"><svg id="chords" viewBox="0 0 560 330" role="img" aria-label="Chord progression graph"></svg></div>
+      <div class="bar"><span class="cap" id="chordcap">Simplified rules for illustration. Click a chord to hear it.</span><button id="chordplay">▶ play</button></div>
+    </div>
+  </article>
+</section>
+
+<!-- ============ RESEARCH ============ -->
+<section id="research">
+  <div class="sec-head"><h2>Research</h2><span>Graph ML and protein models on viruses and proteins</span></div>
+
+  <!-- Bird flu -->
+  <article class="project reveal">
+    <div class="info">
+      <div class="tags"><span class="tag">Graph attention</span><span class="tag">Explainable AI</span><span class="tag">Contrastive learning</span></div>
+      <h3>Modeling Bird Flu Mutations</h3>
+      <div class="when">05/2024 – 06/2026 · 2025 ISEF Grand Award, ACM Special Award</div>
+      <p>CLIGAT, a contrastive-learning plus influence-tree graph attention network for Bird Flu mutation patterns. It identified 3 previously undiscovered mutations (2022–2024).</p>
+      <p>Includes an explainability framework for edges in 3D graph networks. Poster at the 2026 Biophysical Society conference.</p>
+      <div class="links"><a class="primary" href="https://isef.net/project/cbio058-modeling-bird-flu-mutations-and-effects-with-ai" target="_blank" rel="noopener">ISEF project page</a></div>
+    </div>
+    <div class="viz">
+      <div class="stage" id="flu"></div>
+      <div class="bar"><span class="cap" id="flucap">Schematic 3D graph. Drag to rotate.</span><button id="fluexp">explain edges</button></div>
+    </div>
+  </article>
+
+  <!-- RSV -->
+  <article class="project flip reveal">
+    <div class="info">
+      <div class="tags"><span class="tag">GAT + GCN</span><span class="tag">Transformer-CNN</span><span class="tag">Patent filed</span></div>
+      <h3>RSV Protein–Host Interactions</h3>
+      <div class="when">07/2023 – 08/2024 · 2024 ISEF Grand Award</div>
+      <p>A hybrid framework combining GATs, GCNs and Transformer-CNNs to model RSV protein–host interactions, which pointed to a potential vaccine candidate. Patent filed for the algorithm and implementation.</p>
+      <p>Presented first-author at the 2024 Arizona BioIndustry Conference. Mentored by Lars Holdijk (Oxford) on tuning diffusion molecular models. Recognized by the Arizona Governor and AZ Tech Council.</p>
+      <div class="links">
+        <a class="primary" href="https://isef.net/project/cbio043-analyzing-rsv-human-protein-interactions-with-ai" target="_blank" rel="noopener">ISEF project page</a>
+        <a href="https://www.aztechcouncil.org/news/arizonas-most-innovative-and-impactful-companies-leaders-educators-and-students-honored/" target="_blank" rel="noopener">AZ Tech Council</a>
+        <a href="https://www.youtube.com/watch?v=tP5FvdhNpdw" target="_blank" rel="noopener">Video</a>
+      </div>
+    </div>
+    <div class="viz">
+      <div class="stage"><svg id="rsv" viewBox="0 0 560 330" role="img" aria-label="Schematic bipartite attention graph"></svg></div>
+      <div class="bar"><span class="cap" id="rsvcap">Schematic attention weights. Hover a viral protein.</span></div>
+    </div>
+    <div class="media-row">
+      <a class="media" href="https://www.youtube.com/watch?v=tP5FvdhNpdw" target="_blank" rel="noopener"><div class="thumb"><img src="img/rsv-video.jpg" alt="Video thumbnail" loading="lazy"><span class="play"></span></div><div class="cap"><b>Watch on YouTube</b>Coverage of the project</div></a>
+      <a class="media text" href="https://www.aztechcouncil.org/news/arizonas-most-innovative-and-impactful-companies-leaders-educators-and-students-honored/" target="_blank" rel="noopener"><div class="k">Article</div><div class="t">AZ Tech Council honorees</div><div class="s">Arizona's most innovative and impactful companies, leaders, educators and students ↗</div></a>
+      <a class="media text" href="https://isef.net/project/cbio043-analyzing-rsv-human-protein-interactions-with-ai" target="_blank" rel="noopener"><div class="k">Regeneron ISEF 2024</div><div class="t">Analyzing RSV–Human Protein Interactions with AI</div><div class="s">Official project page ↗</div></a>
+    </div>
+  </article>
+
+  <!-- Rhodopsin -->
+  <article class="project reveal">
+    <div class="info">
+      <div class="tags"><span class="tag">Diffusion models</span><span class="tag">Protein structure</span><span class="tag">ASU</span></div>
+      <h3>Rhodopsin Profiling</h3>
+      <div class="when">K. Seetharaman Lab, Arizona State University · 12/2022 – 07/2025</div>
+      <p>A diffusion generative pipeline that profiled 810+ rhodopsin proteins and surfaced pollutant-linked (B[a]P) cataract disease pathways, later scaled to a database of 7,800+ proteins.</p>
+      <p>First-author paper in <i>Biophysical Journal</i>. Presented at the 2024 International Conference on Retinal Proteins in Switzerland, as the only high school student there.</p>
+      <div class="links"><a class="primary" href="https://www.cell.com/biophysj/abstract/S0006-3495(26)00271-7" target="_blank" rel="noopener">Biophysical Journal</a></div>
+    </div>
+    <div class="viz">
+      <div class="stage" id="rho"></div>
+      <div class="bar"><span class="cap">Stylized seven-helix bundle, the rhodopsin fold. Drag to rotate.</span></div>
+    </div>
+    <div class="media-row">
+      <a class="media text" href="https://www.cell.com/biophysj/abstract/S0006-3495(26)00271-7" target="_blank" rel="noopener"><div class="k">Journal · first author</div><div class="t">Biophysical Journal</div><div class="s">Read the abstract on Cell Press ↗</div></a>
+      <div class="media text"><div class="k">Conference · first author</div><div class="t">20th International Conference on Retinal Proteins</div><div class="s">Switzerland, 2024</div></div>
+      <div class="media text"><div class="k">Conference · second author</div><div class="t">ASU Health Solutions Conference</div><div class="s">Prototype project</div></div>
+    </div>
+  </article>
+</section>
+
+<!-- ============ MORE ============ -->
+<section id="more">
+  <div class="sec-head"><h2>More</h2><span>Experience and recognition</span></div>
+  <div class="more">
+    <div>
+      <h4>Also</h4>
+      <div class="row"><b>BeaverHealth</b><small>BioTech AI Intern · 2023</small><p>Built a multilingual conversational dataset for dementia care.</p></div>
+    </div>
+    <div>
+      <h4>Recognition</h4>
+      <div class="row"><b>Regeneron ISEF</b><small>Grand Award 2024 &amp; 2025 · Finalist and special award 2023–2025</small></div>
+      <div class="row"><b>ACM Special Award</b><small>2025, for edge interpretability in 3D graph models</small></div>
+      <div class="row"><b>Arizona Governor's Future Innovator of the Year</b><small>2024</small></div>
+      <div class="row"><b>Elks National MVS Scholar</b><small>2025, top 500 of ~21,000</small></div>
+      <div class="row"><b>Coca-Cola Scholars Semifinalist</b><small>2024</small></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer id="contact"><div class="wrap">
+  <h2>Contact</h2>
+  <p>The best way to reach me is email.</p>
+  <p><a class="mail" href="mailto:Aditya_lakshmi27@berkeley.edu">Aditya_lakshmi27@berkeley.edu</a></p>
+</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (n, a = {}, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* scroll reveal */
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
+document.querySelectorAll('.reveal').forEach(e => io.observe(e));
+
+/* ---------- BioComposer DAG ---------- */
+(function () {
+  const svg = $('#dag'), cap = $('#dagcap'), btn = $('#dagrun');
+  const W = 112, H = 44;
+  const nodes = {
+    t: { x: 10, y: 143, l: 'Target', s: 'input · PDB', i: 'Workflow input: a typed value declared in a TOML manifest.' },
+    r: { x: 150, y: 143, l: 'RFdiffusion', s: 'docker', i: 'Each tool runs in an isolated container described by a typed manifest.' },
+    a: { x: 295, y: 66, l: 'Sequence design', s: 'docker', i: 'Branches run independently once their inputs are ready.' },
+    b: { x: 295, y: 220, l: 'Structure check', s: 'docker', i: 'Execution order is derived from the graph, not written by hand.' },
+    g: { x: 438, y: 143, l: 'Gather', s: 'gather node', i: 'Gather nodes collect results from parallel branches.' }
+  };
+  const edges = [['t', 'r'], ['r', 'a'], ['r', 'b'], ['a', 'g'], ['b', 'g']];
+  const eEls = [], nEls = {}, cEls = [];
+  const gE = el('g', {}, svg), gN = el('g', {}, svg);
+  edges.forEach(([f, t]) => {
+    const A = nodes[f], B = nodes[t], x1 = A.x + W, y1 = A.y + H / 2, x2 = B.x, y2 = B.y + H / 2, dx = (x2 - x1) / 2;
+    const p = el('path', { class: 'edge', d: `M${x1} ${y1}C${x1 + dx} ${y1} ${x2 - dx} ${y2} ${x2} ${y2}` }, gE);
+    const c = el('circle', { class: 'conn', r: 5, cx: (x1 + x2) / 2, cy: (y1 + y2) / 2 }, gE);
+    c.addEventListener('mouseenter', () => cap.textContent = 'Connector: a small, inspectable Python function that reconciles one tool\'s output with the next tool\'s input.');
+    c.addEventListener('mouseleave', () => cap.textContent = base);
+    eEls.push(p); cEls.push(c);
+  });
+  for (const k in nodes) {
+    const n = nodes[k], g = el('g', { class: 'node', transform: `translate(${n.x} ${n.y})` }, gN);
+    el('rect', { width: W, height: H, rx: 9 }, g);
+    const t = el('text', { x: W / 2, y: 19, 'text-anchor': 'middle' }, g); t.textContent = n.l;
+    const s = el('text', { class: 'sub', x: W / 2, y: 33, 'text-anchor': 'middle' }, g); s.textContent = n.s;
+    g.addEventListener('mouseenter', () => cap.textContent = n.i);
+    g.addEventListener('mouseleave', () => cap.textContent = base);
+    nEls[k] = g;
+  }
+  const lg = el('text', { class: 'svgtxt', x: 10, y: 316 }, svg); lg.textContent = '● connector';
+  lg.setAttribute('fill', '#dba76f');
+  const base = 'Illustrative workflow. Hover nodes and connectors.';
+  const order = [['t'], ['r'], ['a', 'b'], ['g']];
+  let running = false;
+  async function run() {
+    if (running) return; running = true;
+    Object.values(nEls).forEach(n => n.classList.remove('on'));
+    eEls.forEach(e => e.classList.remove('on')); cEls.forEach(c => c.classList.remove('on'));
+    for (const lvl of order) {
+      lvl.forEach(k => {
+        nEls[k].classList.add('on');
+        edges.forEach(([f, t], i) => { if (t === k) { eEls[i].classList.add('on'); cEls[i].classList.add('on'); } });
+      });
+      await sleep(650);
+    }
+    running = false;
+  }
+  btn.addEventListener('click', run);
+  new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { run(); o.disconnect(); } }, { threshold: .5 }).observe(svg);
+})();
+
+/* ---------- Geo Space Weather curve ---------- */
+(function () {
+  const svg = $('#sun'), cap = $('#suncap');
+  const L = 30, R = 540, T = 40, B = 270, split = .72, N = 8;
+  const amp = [.55, .8, .5, .9, .65, 1, .7, .6];
+  const f = t => { const c = Math.min(N - 1, Math.floor(t * N)), ph = t * N - c; return amp[c] * Math.pow(Math.sin(Math.PI * ph), 1.6) + .03 * Math.sin(t * 160); };
+  const X = t => L + t * (R - L), Y = v => B - Math.max(0, v) * (B - T);
+  const pts = (a, b) => { let d = ''; for (let t = a; t <= b; t += .002) d += (d ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(f(t)).toFixed(1); return d; };
+  el('line', { x1: L, x2: R, y1: B, y2: B, stroke: '#2c323a' }, svg);
+  el('rect', { x: X(split), y: T - 14, width: R - X(split), height: B - T + 14, fill: 'rgba(219,167,111,.07)' }, svg);
+  el('path', { d: pts(0, split), fill: 'none', stroke: '#86c0ad', 'stroke-width': 1.8 }, svg);
+  el('path', { d: pts(split, 1), fill: 'none', stroke: '#dba76f', 'stroke-width': 1.8, 'stroke-dasharray': '5 4' }, svg);
+  [['sunspot record', L, 'start'], ['forecast', R, 'end']].forEach(([s, x, a]) => { const t = el('text', { class: 'svgtxt', x, y: 295, 'text-anchor': a }, svg); t.textContent = s; });
+  const n = el('text', { class: 'svgtxt', x: X(split), y: 295, 'text-anchor': 'middle' }, svg); n.textContent = 'now';
+  const chips = [['USGS', '#86c0ad'], ['NOAA', '#8fa3d6'], ['GFZ Potsdam', '#8fa3d6']];
+  let cx = L; chips.forEach(([s, c]) => { const w = s.length * 7 + 18; el('rect', { x: cx, y: 8, width: w, height: 20, rx: 10, fill: 'none', stroke: c, opacity: .7 }, svg); const t = el('text', { class: 'svgtxt', x: cx + w / 2, y: 22, 'text-anchor': 'middle' }, svg); t.textContent = s; t.setAttribute('fill', c); cx += w + 8; });
+  const cur = el('line', { y1: T - 10, y2: B, stroke: '#e7e4dc', 'stroke-opacity': .35, visibility: 'hidden' }, svg);
+  const hit = el('rect', { x: L, y: 0, width: R - L, height: 300, fill: 'transparent' }, svg);
+  const base = cap.textContent;
+  hit.addEventListener('mousemove', e => {
+    const r = svg.getBoundingClientRect(), vx = (e.clientX - r.left) / r.width * 560, t = Math.min(1, Math.max(0, (vx - L) / (R - L)));
+    cur.setAttribute('x1', X(t)); cur.setAttribute('x2', X(t)); cur.setAttribute('visibility', 'visible');
+    cap.textContent = t < split ? 'Observed: historical record, drawn solid.' : 'Forecast: model estimate, drawn dashed and shaded.';
+  });
+  hit.addEventListener('mouseleave', () => { cur.setAttribute('visibility', 'hidden'); cap.textContent = base; });
+})();
+
+/* ---------- Chord graph ---------- */
+(function () {
+  const svg = $('#chords'), cap = $('#chordcap'), btn = $('#chordplay');
+  const ch = [['I', [60, 64, 67]], ['ii', [62, 65, 69]], ['iii', [64, 67, 71]], ['IV', [65, 69, 72]], ['V', [67, 71, 74]], ['vi', [69, 72, 76]]];
+  const nxt = { 0: [1, 2, 3, 4, 5], 1: [4, 3, 0], 2: [5, 3, 1], 3: [4, 0, 1], 4: [0, 5, 3], 5: [1, 3, 4] };
+  const COLS = 4, cx = c => 70 + c * 140, cy = r => 40 + r * 50;
+  const E = {}, Nn = {};
+  const gE = el('g', {}, svg), gN = el('g', {}, svg);
+  for (let c = 0; c < COLS - 1; c++) for (let r = 0; r < 6; r++) nxt[r].forEach(q => {
+    E[`${c}-${r}-${q}`] = el('path', { class: 'ce', d: `M${cx(c) + 15} ${cy(r)}C${cx(c) + 70} ${cy(r)} ${cx(c + 1) - 70} ${cy(q)} ${cx(c + 1) - 15} ${cy(q)}` }, gE);
+  });
+  let ctx;
+  function tone(notes, t = .9) {
+    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    notes.forEach(m => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'triangle'; o.frequency.value = 440 * Math.pow(2, (m - 69) / 12);
+      g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(.12, now + .03); g.gain.exponentialRampToValueAtTime(.0005, now + t);
+      o.connect(g).connect(ctx.destination); o.start(now); o.stop(now + t + .05); });
+  }
+  for (let c = 0; c < COLS; c++) ch.forEach(([name, notes], r) => {
+    const g = el('g', { class: 'cn' }, gN); el('circle', { cx: cx(c), cy: cy(r), r: 15 }, g);
+    const t = el('text', { x: cx(c), y: cy(r) }, g); t.textContent = name;
+    g.addEventListener('click', () => { tone(notes); g.classList.add('on'); setTimeout(() => g.classList.remove('on'), 450); });
+    Nn[`${c}-${r}`] = g;
+  });
+  let busy = false;
+  async function play() {
+    if (busy) return; busy = true;
+    Object.values(Nn).forEach(n => n.classList.remove('on')); Object.values(E).forEach(e => e.classList.remove('on'));
+    let r = 0;
+    for (let c = 0; c < COLS; c++) {
+      if (c) { const o = nxt[r]; const q = o[Math.floor(Math.random() * o.length)]; E[`${c - 1}-${r}-${q}`].classList.add('on'); r = q; }
+      Nn[`${c}-${r}`].classList.add('on'); tone(ch[r][1], .8); await sleep(800);
+    }
+    busy = false;
+  }
+  btn.addEventListener('click', play);
+})();
+
+const rng = (s => () => (s = (s * 16807) % 2147483647) / 2147483647)(42);
+/* ---------- shared: run only while on screen ---------- */
+const vis = new WeakMap();
+const watch = e => { vis.set(e, false); new IntersectionObserver(es => vis.set(e, es[0].isIntersecting)).observe(e); };
+const whenVisible = async e => { while (!vis.get(e)) await sleep(250); };
+
+/* ---------- MoE expert placement ---------- */
+(function () {
+  const svg = $('#moe'), cap = $('#moecap'), btn = $('#moebtn'); watch(svg);
+  const G = [[84, 120], [174, 120], [84, 225], [174, 225], [386, 120], [476, 120], [386, 225], [476, 225]];
+  const modes = {
+    naive: [[0, 5], [1, 6], [2, 7], [3, 4], [0, 4], [1, 7], [2, 6], [0, 1], [2, 3], [5, 6]],
+    opt: [[0, 1], [1, 3], [2, 3], [0, 2], [0, 3], [4, 5], [5, 7], [6, 7], [4, 6], [3, 4]]
+  };
+  [[24, 'Node A · NVLink'], [326, 'Node B · NVLink']].forEach(([x, s]) => {
+    el('rect', { x, y: 44, width: 210, height: 236, rx: 14, fill: 'none', stroke: '#2c323a' }, svg);
+    const t = el('text', { class: 'svgtxt', x: x + 14, y: 64 }, svg); t.textContent = s;
+  });
+  const ib = el('line', { x1: 234, x2: 326, y1: 172, y2: 172, stroke: '#dba76f', 'stroke-linecap': 'round' }, svg);
+  const it = el('text', { class: 'svgtxt', x: 280, y: 156, 'text-anchor': 'middle' }, svg); it.textContent = 'InfiniBand';
+  const gl = el('g', {}, svg), gp = el('g', {}, svg);
+  const sets = {};
+  for (const m in modes) sets[m] = modes[m].map(([a, b], k) => {
+    const cross = (a < 4) !== (b < 4);
+    const l = el('line', { x1: G[a][0], y1: G[a][1], x2: G[b][0], y2: G[b][1], stroke: cross ? '#dba76f' : '#86c0ad', 'stroke-opacity': .28, 'stroke-width': 1.2 }, gl);
+    const p = el('circle', { r: 3.4, fill: cross ? '#dba76f' : '#86c0ad' }, gp);
+    return { a, b, l, p, t: k / 10 };
+  });
+  G.forEach(([x, y], i) => { el('circle', { cx: x, cy: y, r: 17, fill: '#1b1f25', stroke: '#3b434d' }, svg); const t = el('text', { class: 'svgtxt', x, y: y + 3, 'text-anchor': 'middle' }, svg); t.textContent = 'GPU'; });
+  let mode = 'naive';
+  function apply() {
+    for (const m in sets) sets[m].forEach(s => { const on = m === mode; s.l.style.display = s.p.style.display = on ? '' : 'none'; });
+    const c = modes[mode].filter(([a, b]) => (a < 4) !== (b < 4)).length;
+    ib.setAttribute('stroke-width', 1.5 + c * 1.3); ib.setAttribute('stroke-opacity', .3 + c * .08);
+    cap.textContent = `${mode === 'naive' ? 'Naive' : 'Optimized'} placement: ${c} of 10 expert-to-expert flows cross InfiniBand (schematic).`;
+    btn.textContent = mode === 'naive' ? 'optimize' : 'reset'; btn.classList.toggle('on', mode !== 'naive');
+  }
+  btn.addEventListener('click', () => { mode = mode === 'naive' ? 'opt' : 'naive'; apply(); });
+  apply();
+  let last = 0;
+  (function loop(ts) { requestAnimationFrame(loop); const dt = Math.min(.05, (ts - last) / 1000); last = ts; if (!vis.get(svg)) return;
+    sets[mode].forEach(s => { s.t = (s.t + dt * .45) % 1; s.p.setAttribute('cx', G[s.a][0] + (G[s.b][0] - G[s.a][0]) * s.t); s.p.setAttribute('cy', G[s.a][1] + (G[s.b][1] - G[s.a][1]) * s.t); }); })(0);
+  new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { setTimeout(() => { if (mode === 'naive') btn.click(); }, 3200); o.disconnect(); } }, { threshold: .6 }).observe(svg);
+})();
+
+/* ---------- Multi-agent coordination ---------- */
+(function () {
+  const svg = $('#marl'), cap = $('#marlcap'), btn = $('#marlbtn'); watch(svg);
+  const L = [[110, 78], [290, 160], [460, 78]], col = ['#86c0ad', '#8fa3d6', '#dba76f'], EP = 24;
+  el('rect', { x: 20, y: 14, width: 520, height: 206, rx: 12, fill: 'none', stroke: '#2c323a' }, svg);
+  L.forEach(([x, y]) => el('path', { d: `M${x - 9} ${y}H${x + 9}M${x} ${y - 9}V${y + 9}`, stroke: '#9b9a94', 'stroke-width': 2, 'stroke-linecap': 'round' }, svg));
+  el('line', { x1: 30, x2: 530, y1: 312, y2: 312, stroke: '#2c323a' }, svg);
+  const lab = el('text', { class: 'svgtxt', x: 30, y: 238 }, svg); lab.textContent = 'landmarks covered per episode';
+  const ln = el('path', { fill: 'none', stroke: '#86c0ad', 'stroke-width': 1.8 }, svg), dots = el('g', {}, svg);
+  const ag = col.map(c => el('circle', { r: 9, cx: 280, cy: 110, fill: c }, svg));
+  const px = e => 30 + e * (500 / (EP - 1)), py = v => 312 - v / 3 * 62;
+  const perms = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+  const d2 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  let token = 0;
+  async function run() {
+    const my = ++token; ln.setAttribute('d', ''); dots.innerHTML = ''; const hist = [];
+    for (;;) {
+      for (let ep = 0; ep < EP; ep++) {
+        if (my !== token) return; await whenVisible(svg);
+        const s = ag.map(() => [50 + Math.random() * 460, 34 + Math.random() * 166]);
+        const coord = Math.random() < Math.min(.95, ep / 14);
+        let tg;
+        if (coord) tg = perms.map(p => ({ p, c: p.reduce((a, l, i) => a + d2(s[i], L[l]), 0) })).sort((a, b) => a.c - b.c)[0].p;
+        else tg = s.map(pt => L.map((l, i) => [d2(pt, l), i]).sort((a, b) => a[0] - b[0])[0][1]);
+        const t0 = performance.now();
+        await new Promise(r => { (function f(now) { const k = Math.min(1, (now - t0) / 1000), e = 1 - Math.pow(1 - k, 3);
+          ag.forEach((a, i) => { a.setAttribute('cx', s[i][0] + (L[tg[i]][0] - s[i][0]) * e + i * 3 * e); a.setAttribute('cy', s[i][1] + (L[tg[i]][1] - s[i][1]) * e + i * 3 * e); });
+          k < 1 ? requestAnimationFrame(f) : r(); })(t0); });
+        const cov = new Set(tg).size; hist.push(cov);
+        el('circle', { cx: px(ep), cy: py(cov), r: 2.6, fill: '#6f6f6b' }, dots);
+        const avg = hist.map((_, i) => { const w = hist.slice(Math.max(0, i - 3), i + 1); return w.reduce((a, b) => a + b) / w.length; });
+        ln.setAttribute('d', avg.map((v, i) => (i ? 'L' : 'M') + px(i).toFixed(1) + ' ' + py(v).toFixed(1)).join(''));
+        cap.textContent = `Episode ${ep + 1} · ${cov}/3 landmarks covered. Illustrative, not training output.`;
+        await sleep(450);
+      }
+      await sleep(2200); if (my !== token) return; ln.setAttribute('d', ''); dots.innerHTML = ''; hist.length = 0;
+    }
+  }
+  btn.addEventListener('click', run); run();
+})();
+
+/* ---------- Red teaming grid ---------- */
+(function () {
+  const svg = $('#red'), cap = $('#redcap'), btn = $('#redbtn'); watch(svg);
+  const M = ['Falcon-7B', 'Llama', 'LLM 3', 'LLM 4', 'LLM 5', 'LLM 6', 'LLM 7'], R = ['Prompt injection', 'Jailbreak', 'Unsafe code', 'Java bug exploit'];
+  const X = i => 140 + i * 57, Y = j => 66 + j * 54;
+  M.forEach((m, i) => { const t = el('text', { class: 'svgtxt', x: X(i) + 24, y: 48, 'text-anchor': 'middle' }, svg); t.textContent = m; });
+  R.forEach((r, j) => { const t = el('text', { class: 'svgtxt', x: 128, y: Y(j) + 24, 'text-anchor': 'end' }, svg); t.textContent = r; });
+  const cells = [], out = [];
+  R.forEach((_, j) => M.forEach((_, i) => { out.push(rng() < .38); cells.push(el('rect', { class: 'cell', x: X(i), y: Y(j), width: 48, height: 44, rx: 7, fill: '#1b1f25', stroke: '#2f353d' }, svg)); }));
+  const lg = [['#dba76f', 'probe got through'], ['#86c0ad', 'model held']];
+  lg.forEach(([c, s], k) => { el('rect', { x: 140 + k * 150, y: 292, width: 10, height: 10, rx: 3, fill: c }, svg); const t = el('text', { class: 'svgtxt', x: 156 + k * 150, y: 301 }, svg); t.textContent = s; });
+  let token = 0;
+  async function run() {
+    const my = ++token;
+    cells.forEach(c => { c.setAttribute('fill', '#1b1f25'); c.setAttribute('stroke', '#2f353d'); });
+    for (let i = 0; i < M.length; i++) for (let j = 0; j < R.length; j++) {
+      if (my !== token) return; await whenVisible(svg);
+      const k = j * M.length + i, c = cells[k];
+      c.setAttribute('stroke', '#e7e4dc'); await sleep(110);
+      c.setAttribute('fill', out[k] ? '#dba76f' : '#2a4a41'); c.setAttribute('stroke', out[k] ? '#dba76f' : '#86c0ad');
+    }
+  }
+  btn.addEventListener('click', run);
+  new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { run(); o.disconnect(); } }, { threshold: .6 }).observe(svg);
+})();
+
+/* ---------- three.js helper ---------- */
+function mount(host, build, { spin = .0025 } = {}) {
+  const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(45, 1, .1, 100); cam.position.set(0, 0, 6);
+  const ren = new THREE.WebGLRenderer({ antialias: true, alpha: true }); ren.setPixelRatio(Math.min(devicePixelRatio, 2));
+  host.appendChild(ren.domElement);
+  scene.add(new THREE.AmbientLight(0xffffff, .7));
+  const dl = new THREE.DirectionalLight(0xffffff, .8); dl.position.set(3, 4, 5); scene.add(dl);
+  const group = new THREE.Group(); scene.add(group);
+  const tick = build(group, scene) || (() => {});
+  const size = () => { const w = host.clientWidth, h = host.clientHeight; ren.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); };
+  new ResizeObserver(size).observe(host); size();
+  let drag = false, px = 0, py = 0, vy = 0, visible = false;
+  const cv = ren.domElement;
+  cv.addEventListener('pointerdown', e => { drag = true; px = e.clientX; py = e.clientY; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointerup', () => drag = false);
+  cv.addEventListener('pointermove', e => { if (!drag) return; group.rotation.y += (e.clientX - px) * .008; group.rotation.x += (e.clientY - py) * .008; px = e.clientX; py = e.clientY; });
+  new IntersectionObserver(es => visible = es[0].isIntersecting).observe(host);
+  (function loop(t) { requestAnimationFrame(loop); if (!visible) return; if (!drag && !reduced) group.rotation.y += spin; tick(t / 1000); ren.render(scene, cam); })(0);
+}
+
+/* ---------- Bird flu 3D graph ---------- */
+(function () {
+  const host = $('#flu'), btn = $('#fluexp'), cap = $('#flucap');
+  let explain = false, hot, mats;
+  btn.addEventListener('click', () => { explain = !explain; btn.classList.toggle('on', explain); cap.textContent = explain ? 'Highlighted edges: the ones a model would rank as most influential (schematic).' : 'Schematic 3D graph. Drag to rotate.'; });
+  mount(host, g => {
+    const cl = [[-1.4, .3, 0, 0x86c0ad], [1.3, .7, -.4, 0x8fa3d6], [.1, -1.3, .5, 0xb7a3d6]], P = [];
+    cl.forEach(([cx, cy, cz, col], k) => { for (let i = 0; i < 22; i++) { const v = new THREE.Vector3(cx + (rng() - .5) * 1.9, cy + (rng() - .5) * 1.7, cz + (rng() - .5) * 1.9); v.k = k; P.push(v);
+      const m = new THREE.Mesh(new THREE.SphereGeometry(.07, 12, 12), new THREE.MeshStandardMaterial({ color: col, roughness: .5 })); m.position.copy(v); g.add(m); } });
+    const base = [], top = [];
+    P.forEach((a, i) => { P.map((b, j) => [a.distanceTo(b), j]).filter(x => x[1] > i).sort((x, y) => x[0] - y[0]).slice(0, 2).forEach(([, j]) => { (rng() < .16 ? top : base).push(a, P[j]); }); });
+    for (let i = 0; i < 14; i++) { const a = P[Math.floor(rng() * 22)], b = P[22 + Math.floor(rng() * 22)]; base.push(a, b); }
+    for (let i = 0; i < 4; i++) top.push(P[Math.floor(rng() * 44)], P[44 + Math.floor(rng() * 22)]);
+    const mk = (pts, c, o) => { const l = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: c, transparent: true, opacity: o })); g.add(l); return l; };
+    const b = mk(base, 0x59636e, .35); hot = mk(top, 0xdba76f, .35);
+    return t => { b.material.opacity += ((explain ? .12 : .35) - b.material.opacity) * .1; hot.material.opacity += ((explain ? 1 : .35) - hot.material.opacity) * .1; hot.material.color.set(explain ? 0xdba76f : 0x59636e); };
+  });
+})();
+
+/* ---------- Rhodopsin helix bundle ---------- */
+mount($('#rho'), g => {
+  const cols = [0x6f8fd0, 0x7aa6c8, 0x86c0ad, 0xa4c48a, 0xd6c27a, 0xdba76f, 0xd4806f];
+  for (let i = 0; i < 7; i++) {
+    const a = (i / 7) * Math.PI * 2, cx = Math.cos(a) * 1.15, cz = Math.sin(a) * .8, pts = [];
+    for (let s = 0; s <= 120; s++) { const t = s / 120, ang = t * Math.PI * 2 * 6; pts.push(new THREE.Vector3(cx + Math.cos(ang) * .2, (t - .5) * 3 * (i % 2 ? -1 : 1) + (i % 2 ? 0 : 0), cz + Math.sin(ang) * .2)); }
+    const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 240, .075, 8), new THREE.MeshStandardMaterial({ color: cols[i], roughness: .45, metalness: .1 }));
+    g.add(m);
+  }
+  const z = []; for (let i = 0; i < 9; i++) z.push(new THREE.Vector3((i % 2 ? .12 : -.12), -.5 + i * .12, .05));
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(z), 40, .04, 6), new THREE.MeshStandardMaterial({ color: 0xffd8a0, emissive: 0x663300, roughness: .3 })));
+  g.rotation.x = .25;
+}, { spin: .004 });
+
+/* ---------- RSV bipartite attention ---------- */
+(function () {
+  const svg = $('#rsv'), cap = $('#rsvcap'), base = cap.textContent;
+  const V = ['F', 'G', 'N', 'M', 'NS1'], Hn = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+  const vy = i => 50 + i * 58, hy = i => 35 + i * 49;
+  const edges = [], gE = el('g', {}, svg), gN = el('g', {}, svg), vN = [];
+  V.forEach((_, i) => Hn.forEach((_, j) => { const w = rng(); if (w > .45) { const p = el('path', { d: `M150 ${vy(i)}C260 ${vy(i)} 300 ${hy(j)} 410 ${hy(j)}`, fill: 'none', stroke: '#8fa3d6', 'stroke-width': .6 + w * 3, 'stroke-opacity': .22 }, gE); edges.push({ i, j, p, w }); } }));
+  const node = (x, y, t, c, r) => { const g = el('g', {}, gN); el('circle', { cx: x, cy: y, r, fill: '#1b1f25', stroke: c, 'stroke-width': 1.3 }, g); const tx = el('text', { x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#e7e4dc', 'font-size': 10.5, 'font-family': 'Inter' }, g); tx.textContent = t; return g; };
+  V.forEach((v, i) => { const g = node(130, vy(i), v, '#86c0ad', 20); vN.push(g); g.style.cursor = 'pointer';
+    g.addEventListener('mouseenter', () => { edges.forEach(e => e.p.setAttribute('stroke', e.i === i ? '#dba76f' : '#8fa3d6') || e.p.setAttribute('stroke-opacity', e.i === i ? .95 : .08)); cap.textContent = 'Edge width stands in for attention weight (schematic).'; });
+    g.addEventListener('mouseleave', () => { edges.forEach(e => { e.p.setAttribute('stroke', '#8fa3d6'); e.p.setAttribute('stroke-opacity', .22); }); cap.textContent = base; }); });
+  Hn.forEach((h, j) => node(430, hy(j), h, '#8fa3d6', 17));
+  [['viral', 130], ['host', 430]].forEach(([s, x]) => { const t = el('text', { class: 'svgtxt', x, y: 318, 'text-anchor': 'middle' }, svg); t.textContent = s; });
+})();
+</script>
+</body>
+</html>
